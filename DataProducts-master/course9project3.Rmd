@@ -13,6 +13,9 @@ knitr::opts_chunk$set(echo = FALSE)
 
 This was built for the course Developing Data Products as part of the Coursera Data Science Specialization
 
+The demo is availiable:
+<https://fxy27.shinyapps.io/DataProducts-master/>
+
 
 ## Currency Exchange
 
