@@ -1,0 +1,52 @@
+---
+title: "Shiny Application and Reproducible Pitch"
+author: "Xueyi Fan"
+date: "1/3/2017"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Overview
+
+This was built for the course Developing Data Products as part of the Coursera Data Science Specialization
+
+
+## Currency Exchange
+
+The sites is providing a tools for user to calculate live currency and foreign 
+exchange rates 
+
+Change function: 
+
+$Currency1 = i * Currency2$ 
+
+Where:
+$i = currenty foreign exchange rates$
+
+## Interactive Currency Converter Result
+
+Input: 
+    1 Canada Dollar exchange to US Dollar:
+    Exchange Rate is 0.74
+    
+Output:
+    
+    0.74 US Dollar
+
+
+## Shiny App: Interactive Currency Converter 
+* Sidebar panel
+    + currency1: current currency
+    + currency2: foreign currency
+    + rate: Exchange rate
+    + amount: Value of money
+
+* Main panel
+    + Currency excange rate
+    + Make calculation on server side
+    + Display the foreign currency 
+
+

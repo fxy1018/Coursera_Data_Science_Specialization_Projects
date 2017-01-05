@@ -1,0 +1,131 @@
+---
+title: "Project for course 8"
+author: "Xueyi Fan"
+date: "1/2/2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Instructions
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: [link](http://groupware.les.inf.puc-rio.br/har) (see the section on the Weight Lifting Exercise Dataset).
+
+##Loading Data
+
+```{r}
+library(caret)
+library(randomForest)
+library(rpart)
+library(rpart.plot)
+library(RColorBrewer)
+library(rattle)
+library(e1071)
+
+train_data <- read.csv("pml-training.csv", na.strings=c("NA","#DIV/0!",""), header=TRUE)
+
+test_data <- read.csv("pml-testing.csv", na.strings=c("NA","#DIV/0!",""), header=TRUE)
+
+str(train_data)
+table(train_data$classe)
+
+
+```
+
+## Data Processing 
+```{r}
+#keep columns having values
+train_data <- train_data[,colSums(is.na(train_data)) == 0]
+test_data <- test_data[,colSums(is.na(test_data))==0]
+
+# remove unnecessary columns
+train_data <- train_data[, -c(1:7)]
+test_data <- test_data[, -c(1:7)]
+
+#view the processed data
+str(train_data)
+str(test_data)
+
+```
+
+## Cross-validation
+For training data set, it has 53 variables and 19622 observations
+For testing data set, it has 53 variables and 20 obs
+
+In order to apply cross-validation, I will divide training data into 2 gourp, one contained 80% for taining and 20% for testing
+
+```{r}
+#create random group
+groups <- createFolds(1:19622, k = 100)
+
+#subset the training data and testing data from train_data
+training <- train_data[unlist(groups[1:80]),]
+testing <- train_data[unlist(groups[81:100]),]
+
+#view the new data 
+dim(training)
+dim(testing)
+plot(training$classe, main = "Subset of Train Data For Training", xlab = "classe levels", ylab = "Frequency")
+
+plot(testing$classe, main = "Subset of Train Data For Testing", xlab = "classe levels", ylab = "Frequency")
+
+
+```
+
+### Ramdom Forest Model
+
+```{r}
+ran_forest <- randomForest(classe ~ ., data = training)
+
+prediction <- predict(ran_forest, testing)
+
+plot(ran_forest)
+
+confusionMatrix(prediction, testing$classe)
+
+```
+
+### Decision Tree
+
+```{r}
+dec_tree <- rpart(classe~ . , data = training, method = "class")
+
+prediction2 <- predict(dec_tree, testing, type = "class")
+
+#plot the decistion tree
+rpart.plot(dec_tree, main = "Classification Tree")
+
+confusionMatrix(prediction2, testing$classe)
+
+```
+
+### SVM
+
+```{r}
+
+svm_model <- svm(classe ~., data = training)
+prediction3 <- predict(svm_model, testing)
+
+confusionMatrix(prediction2, testing$classe)
+
+```
+
+Compared the model got from decision tree, SVM to the model got from random forest, random forest model have a better sensitivity and specificity on all class. So I will use random forest model to make predictions on test data.
+
+### Prediction For Test Data
+
+```{r}
+
+test_predict <- predict(ran_forest, test_data, type = "class")
+
+print(test_predict)
+
+```            
+
+
+
+
+
+
